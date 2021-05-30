@@ -1,7 +1,6 @@
 const http = require('http');
 
-const port = 8080;
-const host = 'localhost';
+const {host,port} = require('./configs/hostandport.json');
 
 const server = http.createServer((req,res) => {
 
