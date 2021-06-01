@@ -1,7 +1,7 @@
 const fs = require('fs')
 
 module.exports = {
-    getMime: function() {
+    getMimes: function() {
         let mimes = fs.readFileSync('./server/configs/supportedMimes.csv','utf8');
         mimes = mimes.split('\n');
         for (let i=0;i<mimes.length;i++) {
