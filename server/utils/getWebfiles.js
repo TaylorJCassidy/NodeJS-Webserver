@@ -4,8 +4,8 @@ module.exports = {
     getWebfiles: function() {
         const {webdir} = require('../configs/webdir.json')
         const files = fs.readdirSync(webdir);
-        const headers = require('../utils/getHeaders.js').getHeaders();
-        const webfiles = getWebfiles(files,webdir,new Map(),headers)
+        const mimes = require('./getMimes.js').getMimes();
+        const webfiles = getWebfiles(files,webdir,new Map(),mimes)
         webfiles.set('/', webfiles.get('/index.html'))
         return webfiles;
 
@@ -14,12 +14,12 @@ module.exports = {
          * @param {Array} files 
          * @param {String} filePath 
          * @param {Map<String,Object>} webfiles 
-         * @param {Map<String,String>} headers 
+         * @param {Map<String,String>} mimes 
          * @returns 
          */
-        function getWebfiles(files,filePath,webfiles,headers) {
+        function getWebfiles(files,filePath,webfiles,mimes) {
             for (let i=0;i<files.length;i++) {
-                let webfile = getWebfile(filePath + '/' +files[i],webfiles,headers);
+                let webfile = getWebfile(filePath + '/' +files[i],webfiles,mimes);
                 if (webfile == null) {continue;}
                 webfiles.set(webfile.path,webfile);
             }
@@ -28,27 +28,22 @@ module.exports = {
 
         /**
          * 
-         * @param {String} filePath 
-         * @param {Map<String,Object>} webfiles 
-         * @param {Map<String,String>} headers 
+         * @param {String} filePath
+         * @param {Map<String,Object>} webfiles
+         * @param {Map<String,String>} mimes
          * @returns 
          */
-        function getWebfile(filePath,webfiles,headers) {
+        function getWebfile(filePath,webfiles,mimes) {
             let fileExt = filePath.match(/(?<=.\.)[^.]+$/);
             if (fileExt == null) {
                 let files = fs.readdirSync(filePath);
-                getWebfiles(files,filePath,webfiles,headers);
+                getWebfiles(files,filePath,webfiles,mimes);
             }
-            else {
-                fileExt = fileExt[0];
-                const path = filePath.substring(webdir.length);
-                const header = headers.get(fileExt);
-                const content = fs.readFileSync(filePath);
-                
+            else {                
                 return {
-                    path: path,
-                    header: header,
-                    content: content
+                    path: filePath.substring(webdir.length),
+                    header: mimes.get(fileExt[0]),
+                    content: fs.readFileSync(filePath)
                 };
             }
         }
