@@ -39,11 +39,16 @@ module.exports = {
                 let files = fs.readdirSync(filePath);
                 getWebfiles(files,filePath,webfiles,mimes);
             }
-            else {                
+            else {
+                const content = fs.readFileSync(filePath);
+                const header = {
+                    'Content-Type': mimes.get(fileExt[0]),
+                    'Content-Length': content.length
+                };
                 return {
                     path: filePath.substring(webdir.length),
-                    header: mimes.get(fileExt[0]),
-                    content: fs.readFileSync(filePath)
+                    header: header,
+                    content: content
                 };
             }
         }
