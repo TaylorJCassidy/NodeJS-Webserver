@@ -1,4 +1,4 @@
 {
     "webdir": "./website",
-    "notfoundurl": "/jobinfo.html"
+    "notfoundurl": ""
 }
